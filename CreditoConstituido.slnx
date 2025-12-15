@@ -1,3 +1,11 @@
 <Solution>
-  <Project Path="CreditoConstituido/CreditoConstituido.csproj" />
+  <Folder Name="/src/">
+    <Project Path="CreditoConstituido.Application/CreditoConstituido.Application.csproj" Id="575b5ca7-0527-4bdc-bad3-4289ec61d683" />
+    <Project Path="CreditoConstituido.Domain/CreditoConstituido.Domain.csproj" Id="ce2beb9e-d21c-4991-9afc-f39847cf9f8f" />
+    <Project Path="CreditoConstituido.Infrastructure/CreditoConstituido.Infrastructure.csproj" Id="31d5e47a-179f-4849-81b8-0f5fdac51fc4" />
+    <Project Path="CreditoConstituido/CreditoConstituido.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CreditoConstituido.Tests/CreditoConstituido.Tests.csproj" Id="8125d610-99f8-417b-8f12-138f778b6813" />
+  </Folder>
 </Solution>
