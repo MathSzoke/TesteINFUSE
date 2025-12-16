@@ -71,8 +71,10 @@ dotnet test
 ## 👤 Autor
 
 **Matheus Szoke**  
-📧 Email: [matheusszoke@gmail.com](mailto:matheusszoke@gmail.com)  
-💼 LinkedIn: [linkedin.com/in/matheusszoke](https://linkedin.com/in/matheusszoke)
+
+📧 **Email:** [matheusszoke@gmail.com](mailto:matheusszoke@gmail.com)  
+💼 **LinkedIn:** [linkedin.com/in/matheusszoke](https://linkedin.com/in/matheusszoke)  
+🌐 **Website:** [portfolio.mathszoke.com](https://portfolio.mathszoke.com)
 
 <p align="center">
   <sub>Desenvolvido com 💚 por <strong>Matheus Szoke</strong></sub>
