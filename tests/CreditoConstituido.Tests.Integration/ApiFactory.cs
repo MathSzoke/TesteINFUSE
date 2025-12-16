@@ -1,7 +1,8 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
 using CreditoConstituido.Api;
 using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Testcontainers.Kafka;
 using Testcontainers.PostgreSql;
@@ -19,7 +20,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public ApiFactory()
     {
-        _postgres = new PostgreSqlBuilder()
+        this._postgres = new PostgreSqlBuilder()
             .WithImage("postgres:16-alpine")
             .WithDatabase("credito_db")
             .WithUsername("credito")
@@ -27,7 +28,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
             .Build();
 
-        _kafka = new KafkaBuilder()
+        this._kafka = new KafkaBuilder()
             .WithImage("confluentinc/cp-kafka:7.6.1")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(9092))
             .Build();
@@ -56,11 +57,11 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.UseEnvironment("Development");
 
-        builder.ConfigureServices(_ =>
+        builder.ConfigureAppConfiguration((ctx, cfg) => cfg.AddInMemoryCollection(new Dictionary<string, string?>
         {
-            Environment.SetEnvironmentVariable("ConnectionStrings__Default", ConnectionString);
-            Environment.SetEnvironmentVariable("Kafka__BootstrapServers", KafkaBootstrapServers);
-        });
+            ["ConnectionStrings:Default"] = ConnectionString,
+            ["Kafka:BootstrapServers"] = KafkaBootstrapServers
+        }));
 
         return base.CreateHost(builder);
     }
