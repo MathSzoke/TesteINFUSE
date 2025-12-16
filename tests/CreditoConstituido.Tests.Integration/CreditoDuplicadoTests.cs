@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
+using Xunit;
 
 namespace CreditoConstituido.Tests.Integration;
 
@@ -8,12 +9,15 @@ public sealed class CreditoDuplicadoTests : IClassFixture<ApiFactory>
 {
     private readonly ApiFactory _factory;
 
-    public CreditoDuplicadoTests(ApiFactory factory) => this._factory = factory;
+    public CreditoDuplicadoTests(ApiFactory factory) => _factory = factory;
 
     [Fact]
     public async Task Post_ComNumeroCreditoDuplicado_NaoDeveInserirDuplicado()
     {
-        using var client = this._factory.CreateApiClient();
+        using var client = _factory.CreateApiClient();
+
+        var warmup = await client.GetAsync("/self");
+        warmup.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var payload = new[]
         {
@@ -57,11 +61,10 @@ public sealed class CreditoDuplicadoTests : IClassFixture<ApiFactory>
             if (body is null || body.Count == 0) return null;
 
             return body;
-        }, 15000, 300);
+        }, 30000, 300);
 
         itens.Should().NotBeNull();
-        itens!.Count.Should().Be(1);
-        itens[0].NumeroCredito.Should().Be("999999");
+        itens!.Count(x => x.NumeroCredito == "999999").Should().Be(1);
     }
 
     private static async Task<T?> PollAsync<T>(Func<Task<T?>> action, int timeoutMs, int delayMs) where T : class

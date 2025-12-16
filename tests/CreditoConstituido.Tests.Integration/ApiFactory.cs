@@ -1,10 +1,10 @@
-﻿using Testcontainers.Kafka;
-using Testcontainers.PostgreSql;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Hosting;
+﻿using System.Net.Http;
 using CreditoConstituido.Api;
 using DotNet.Testcontainers.Builders;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Hosting;
+using Testcontainers.Kafka;
+using Testcontainers.PostgreSql;
 
 namespace CreditoConstituido.Tests.Integration;
 
@@ -19,7 +19,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public ApiFactory()
     {
-        this._postgres = new PostgreSqlBuilder()
+        _postgres = new PostgreSqlBuilder()
             .WithImage("postgres:16-alpine")
             .WithDatabase("credito_db")
             .WithUsername("credito")
@@ -27,7 +27,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
             .Build();
 
-        this._kafka = new KafkaBuilder()
+        _kafka = new KafkaBuilder()
             .WithImage("confluentinc/cp-kafka:7.6.1")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(9092))
             .Build();
@@ -56,7 +56,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.UseEnvironment("Development");
 
-        builder.ConfigureAppConfiguration((ctx, cfg) =>
+        builder.ConfigureServices(_ =>
         {
             Environment.SetEnvironmentVariable("ConnectionStrings__Default", ConnectionString);
             Environment.SetEnvironmentVariable("Kafka__BootstrapServers", KafkaBootstrapServers);
@@ -65,9 +65,14 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         return base.CreateHost(builder);
     }
 
-    public HttpClient CreateApiClient() =>
-        this.CreateClient(new WebApplicationFactoryClientOptions
+    public HttpClient CreateApiClient()
+    {
+        var client = this.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });
+
+        client.Timeout = TimeSpan.FromMinutes(5);
+        return client;
+    }
 }

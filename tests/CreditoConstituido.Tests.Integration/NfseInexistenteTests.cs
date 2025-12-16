@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
+using Xunit;
 
 namespace CreditoConstituido.Tests.Integration;
 
@@ -14,6 +15,9 @@ public sealed class NfseInexistenteTests : IClassFixture<ApiFactory>
     public async Task Get_PorNfse_Inexistente_DeveRetornar_ListaVazia()
     {
         using var client = this._factory.CreateApiClient();
+
+        var warmup = await client.GetAsync("/self");
+        warmup.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var response = await client.GetAsync("/api/creditos/NFSE-INEXISTENTE");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
