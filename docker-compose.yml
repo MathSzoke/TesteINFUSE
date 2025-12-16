@@ -66,6 +66,8 @@ services:
       Kafka__IntegrationTopicName: integrar-credito-constituido-entry
       Kafka__AuditTopicName: credito-consulta-audit
       Kafka__ConsumerGroupId: credito-constituido-worker
+      Logging__LogLevel__Default: Information
+      Logging__LogLevel__CreditoConstituido.Api.HostedServices.CreditoIntegrationWorker: Debug
 
 volumes:
   credito_pgdata:
